@@ -1,11 +1,6 @@
 /* style.css */
 
 /* Layout */
-
-html {
-  background-color: aliceblue;
-}
-
 #content {
   display: flex;
 }
