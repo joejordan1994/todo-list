@@ -2,15 +2,15 @@
 
 import { createProject } from "./project";
 import { createTodo } from "./todo";
-import { saveData, loadData } from "./storage"; // Import the storage module
+import { saveData, loadData } from "./storage";
 
-const projectList = []; // Array to hold all projects
-let currentProject = null; // The project currently selected
+const projectList = [];
+let currentProject = null;
 
 function initializeApp() {
   // Load projects from localStorage
   const storedProjects = loadData();
-  if (storedProjects) {
+  if (storedProjects.length > 0) {
     // Reconstruct project and todo objects
     storedProjects.forEach((projData) => {
       const project = createProject(projData.name);
@@ -31,6 +31,7 @@ function initializeApp() {
     const defaultProject = createProject("Default");
     projectList.push(defaultProject);
     currentProject = defaultProject;
+    saveData(projectList); // Save the default project to localStorage
   }
 
   // Render the UI
