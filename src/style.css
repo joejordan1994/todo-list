@@ -1,6 +1,75 @@
-/* Basic styles for your app */
-body {
-  font-family: Arial, sans-serif;
+/* style.css */
+
+/* Layout */
+#content {
+  display: flex;
 }
 
-/* Add styles for project list, todo list, forms, buttons, etc. */
+#sidebar {
+  width: 25%;
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+
+#main {
+  width: 75%;
+  padding: 1rem;
+}
+
+/* Project List */
+.project-item {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.project-item:hover {
+  background-color: #ddd;
+}
+
+.active-project {
+  background-color: #ccc;
+}
+
+/* Todo List */
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.todo-item:hover {
+  background-color: #f9f9f9;
+}
+
+.todo-title {
+  font-weight: bold;
+}
+
+.todo-due-date {
+  color: #888;
+}
+
+/* Todo Details */
+.todo-details {
+  position: fixed;
+  top: 20%;
+  left: 30%;
+  background-color: white;
+  padding: 2rem;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+
+.todo-details button {
+  margin-right: 1rem;
+}
+
+/* Buttons */
+button {
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+}
