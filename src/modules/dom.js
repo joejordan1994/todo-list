@@ -4,8 +4,8 @@ import { createProject } from "./project";
 import { createTodo } from "./todo";
 import { saveData, loadData } from "./storage";
 
-const projectList = [];
-let currentProject = null;
+const projectList = []; // Array to hold all projects
+let currentProject = null; // The project currently selected
 
 function initializeApp() {
   // Load projects from localStorage
@@ -14,7 +14,8 @@ function initializeApp() {
     // Reconstruct project and todo objects
     storedProjects.forEach((projData) => {
       const project = createProject(projData.name);
-      projData.todos.forEach((todoData) => {
+      const todosArray = projData.todos || []; // Ensure todos is an array
+      todosArray.forEach((todoData) => {
         const todo = createTodo(
           todoData.title,
           todoData.description,
@@ -134,7 +135,7 @@ function addProjectListeners() {
       const newProject = createProject(projectName);
       projectList.push(newProject);
       renderProjects();
-      saveData(projectList); // Save to localStorage
+      saveData(projectList); // Save updated data
     }
   });
 }
@@ -152,7 +153,7 @@ function addTodoListeners() {
       const newTodo = createTodo(title, description, dueDate, priority);
       currentProject.addTodo(newTodo);
       renderTodos(currentProject);
-      saveData(projectList); // Save to localStorage
+      saveData(projectList); // Save updated data
     } else {
       alert("Please provide at least a title, due date, and priority.");
     }
@@ -192,7 +193,7 @@ function showTodoDetails(todo, index) {
   deleteBtn.addEventListener("click", () => {
     currentProject.removeTodo(todo.title);
     renderTodos(currentProject);
-    saveData(projectList); // Save to localStorage
+    saveData(projectList); // Save updated data
     // Close details view
     document.body.removeChild(detailsContainer);
   });
@@ -228,7 +229,7 @@ function editTodoDetails(todo, index) {
 
   // Re-render the todos and save data
   renderTodos(currentProject);
-  saveData(projectList); // Save to localStorage
+  saveData(projectList); // Save updated data
 }
 
 // Export the initializeApp function
