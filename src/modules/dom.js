@@ -2,15 +2,36 @@
 
 import { createProject } from "./project";
 import { createTodo } from "./todo";
+import { saveData, loadData } from "./storage"; // Import the storage module
 
 const projectList = []; // Array to hold all projects
 let currentProject = null; // The project currently selected
 
 function initializeApp() {
-  // Create default project
-  const defaultProject = createProject("Default");
-  projectList.push(defaultProject);
-  currentProject = defaultProject;
+  // Load projects from localStorage
+  const storedProjects = loadData();
+  if (storedProjects) {
+    // Reconstruct project and todo objects
+    storedProjects.forEach((projData) => {
+      const project = createProject(projData.name);
+      projData.todos.forEach((todoData) => {
+        const todo = createTodo(
+          todoData.title,
+          todoData.description,
+          todoData.dueDate,
+          todoData.priority
+        );
+        project.addTodo(todo);
+      });
+      projectList.push(project);
+    });
+    currentProject = projectList[0];
+  } else {
+    // Create default project if no data
+    const defaultProject = createProject("Default");
+    projectList.push(defaultProject);
+    currentProject = defaultProject;
+  }
 
   // Render the UI
   renderProjects();
@@ -21,6 +42,7 @@ function initializeApp() {
   addTodoListeners();
 }
 
+// Function to render the list of projects
 function renderProjects() {
   const projectContainer = document.getElementById("project-list");
   projectContainer.innerHTML = ""; // Clear existing content
@@ -50,8 +72,7 @@ function renderProjects() {
   });
 }
 
-// dom.js (continued)
-
+// Function to render the todos of the current project
 function renderTodos(project) {
   const todoContainer = document.getElementById("todo-list");
   todoContainer.innerHTML = ""; // Clear existing content
@@ -89,6 +110,7 @@ function renderTodos(project) {
   });
 }
 
+// Function to determine priority color
 function getPriorityColor(priority) {
   switch (priority) {
     case "High":
@@ -102,8 +124,6 @@ function getPriorityColor(priority) {
   }
 }
 
-// dom.js (continued)
-
 // Function to add event listeners related to projects
 function addProjectListeners() {
   const addProjectBtn = document.getElementById("add-project-btn");
@@ -113,11 +133,10 @@ function addProjectListeners() {
       const newProject = createProject(projectName);
       projectList.push(newProject);
       renderProjects();
+      saveData(projectList); // Save to localStorage
     }
   });
 }
-
-// dom.js (continued)
 
 // Function to add event listeners related to todos
 function addTodoListeners() {
@@ -132,14 +151,14 @@ function addTodoListeners() {
       const newTodo = createTodo(title, description, dueDate, priority);
       currentProject.addTodo(newTodo);
       renderTodos(currentProject);
+      saveData(projectList); // Save to localStorage
     } else {
       alert("Please provide at least a title, due date, and priority.");
     }
   });
 }
 
-// dom.js (continued)
-
+// Function to show todo details and provide options to edit or delete
 function showTodoDetails(todo, index) {
   // Create a modal or a detailed view
   const detailsContainer = document.createElement("div");
@@ -162,6 +181,8 @@ function showTodoDetails(todo, index) {
   editBtn.textContent = "Edit";
   editBtn.addEventListener("click", () => {
     editTodoDetails(todo, index);
+    // Close details view
+    document.body.removeChild(detailsContainer);
   });
 
   // Delete button
@@ -170,6 +191,7 @@ function showTodoDetails(todo, index) {
   deleteBtn.addEventListener("click", () => {
     currentProject.removeTodo(todo.title);
     renderTodos(currentProject);
+    saveData(projectList); // Save to localStorage
     // Close details view
     document.body.removeChild(detailsContainer);
   });
@@ -186,6 +208,7 @@ function showTodoDetails(todo, index) {
   document.body.appendChild(detailsContainer);
 }
 
+// Function to edit todo details
 function editTodoDetails(todo, index) {
   // Prompt the user for new details
   const newTitle = prompt("Edit title:", todo.title);
@@ -202,23 +225,10 @@ function editTodoDetails(todo, index) {
   todo.dueDate = newDueDate || todo.dueDate;
   todo.priority = newPriority || todo.priority;
 
-  // Re-render the todos
+  // Re-render the todos and save data
   renderTodos(currentProject);
+  saveData(projectList); // Save to localStorage
 }
 
-// dom.js (continued)
-
-function initializeApp() {
-  // Create default project
-  const defaultProject = createProject("Default");
-  projectList.push(defaultProject);
-  currentProject = defaultProject;
-
-  // Render the UI
-  renderProjects();
-  renderTodos(currentProject);
-
-  // Add event listeners
-  addProjectListeners();
-  addTodoListeners();
-}
+// Export the initializeApp function
+export { initializeApp };
